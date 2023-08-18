@@ -34,38 +34,35 @@ struct ContentView: View {
             .edgesIgnoringSafeArea(.all)
             .overlay(
             ZStack{
-               
                 VStack(alignment: .leading) {
                     HStack{
-                        
                         Text("Weather forecast for: \(searchText)")
                             .font(.headline)
                             .padding(.leading)
                     }
                     
-                   // NavigationStack{
-                        List(vm.weather)  { weather in
-                            //NavigationLink(destination: DetailView(selectedItem: weather.temp.day)){
-                                WeatherCellView(dayTemp: weather.temp.day, windSpeed: weather.wind_speed, rain: weather.rain ?? 0.0, dt: weather.dt, weather: weather.weather.first?.main ?? "", weatherImage: weather.weather.first?.icon ?? "" )
-                                }.background(Color.clear)
-                            //}.buttonStyle(PlainButtonStyle())
-                            
-                        //}.scrollContentBackground(.hidden)
+                    List(vm.weather)  { weather in
+                        NavigationLink(destination: DetailView(selectedItem: weather.temp.day)) {
+                        WeatherCellView(dayTemp: weather.temp.day, windSpeed: weather.wind_speed, rain: weather.rain ?? 0.0, dt: weather.dt, weather: weather.weather.first?.main ?? "", weatherImage: weather.weather.first?.icon ?? "" ).listRowBackground(Color.clear)
+                        }.listRowBackground(Color.clear)
+                        
+                    }
+                    .scrollContentBackground(.hidden)
                         .background(Color.clear)
                                     .onChange(of: searchText) { newValue in
                                         vm.didChangedText.send(newValue)
-                                   }
-                }.background(Color.clear)
-             
+                                    }
+                }
                 }
             )
+
             .navigationTitle("Weather App")
             .navigationBarTitleDisplayMode(.large)
-        }
+        } .background(Color.clear)
         .searchable(text:$searchText).foregroundColor(.white).tint(Color(red: 0.25, green: 0.8, blue: 0.85))
-        .onChange(of: searchText) { newValue in
-                        print(vm.weather)
-                    }
+//        .onChange(of: searchText) { newValue in
+//                        print(vm.weather)
+//                    }
     }
     private func searchBarImage() -> UIImage {
         let image = UIImage(systemName: "magnifyingglass")
@@ -91,8 +88,6 @@ struct NavigationConfigurator: UIViewControllerRepresentable {
     }
 
 }
-
-
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
