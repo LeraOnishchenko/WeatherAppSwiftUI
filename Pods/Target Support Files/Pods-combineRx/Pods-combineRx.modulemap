@@ -1,0 +1,6 @@
+framework module Pods_combineRx {
+  umbrella header "Pods-combineRx-umbrella.h"
+
+  export *
+  module * { export * }
+}
