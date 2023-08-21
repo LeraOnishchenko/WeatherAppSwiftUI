@@ -23,7 +23,8 @@ struct WeatherData: Codable, Equatable {
     let lon: Double
     let timezone: String
     let timezone_offset: Int
-    let daily: [Daily]
+    let daily: [Daily]?
+    let hourly: [Hourly]?
 
     struct Daily: Codable,Equatable,Identifiable{
         static func == (lhs: WeatherData.Daily, rhs: WeatherData.Daily) -> Bool {
@@ -36,6 +37,19 @@ struct WeatherData: Codable, Equatable {
         let wind_speed: Double
         let weather: [Weather]
         let rain: Double?
+    }
+    
+    struct Hourly: Codable,Equatable,Identifiable{
+        static func == (lhs: WeatherData.Hourly, rhs: WeatherData.Hourly) -> Bool {
+             return lhs.dt == rhs.dt && lhs.temp == rhs.temp && lhs.wind_speed == rhs.wind_speed && lhs.weather == rhs.weather
+        }
+        
+        var id: Int { dt }
+        let dt: Int
+        let temp: Double
+        let wind_speed: Double
+        let weather: [Weather]
+        //let rain: Double?
     }
 
     struct Temp: Codable, Equatable {

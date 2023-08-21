@@ -41,7 +41,7 @@ struct ContentView: View {
                     }
                     
                     List(vm.weather)  { weather in
-                        NavigationLink(destination: DetailView(searchText: searchText)) {
+                        NavigationLink(destination: DetailView(searchText: searchText, dt: weather.dt, rain: weather.rain)) {
                         WeatherCellView(dayTemp: weather.temp.day, windSpeed: weather.wind_speed, rain: weather.rain ?? 0.0, dt: weather.dt, weather: weather.weather.first?.main ?? "", weatherImage: weather.weather.first?.icon ?? "" ).listRowBackground(Color.clear)
                         }.listRowBackground(Color.clear)
                         

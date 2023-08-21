@@ -10,9 +10,56 @@ import SwiftUI
 
 struct DetailView: View {
     
+    let imageNamesAndDescriptions: [String: Image] = [
+        "01d": Image("Sun"),
+        "02d": Image("FewClouds"),
+        "03d": Image("Cloud"),
+        "04d": Image("brokenClouds"),
+        "09d": Image("showerRain"),
+        "10d": Image("rainIm"),
+        "11d": Image("thunderstorm"),
+        "13d": Image("snow"),
+        "50d": Image("mist"),
+        "01n": Image("nightClear"),
+        "02n": Image("nightFewClouds"),
+        "03n": Image("nightSCloud"),
+        "04n": Image("nightBrokenClouds"),
+        "09n": Image("nightShowerRain"),
+        "10n": Image("nightRain"),
+        "11n": Image("nightThunderstorm"),
+        "13n": Image("nightSnow"),
+        "50n": Image("nightMist")
+    ]
+    
     var searchText: String
+    var dt: Int
+    var rain: Double?
     @ObservedObject var vm = DetailViewModel()
     @State private var selectedItemIndex: Int?
+
+    func formattedDate(from timestamp: Int) -> String {
+         let dateFormatter = DateFormatter()
+         dateFormatter.dateFormat = "d 'th' MMM `yy"
+        return dateFormatter.string(from: Date(timeIntervalSince1970: TimeInterval(timestamp)))
+     }
+    
+    func formattedTime(from timestamp: Int) -> String {
+          let dateFormatter = DateFormatter()
+          dateFormatter.dateFormat = "HH"
+          let date = Date(timeIntervalSince1970: TimeInterval(timestamp))
+          return dateFormatter.string(from: date)
+      }
+    
+    func weekdayName(from timestamp: Int) -> String {
+        let date = Date(timeIntervalSince1970: TimeInterval(timestamp))
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "EEEE"
+        return dateFormatter.string(from: date)
+    }
+    
+//    func cheakWeather() -> [WeatherData.Hourly]{
+//        return
+//    }
     
     var body: some View {
         NavigationView {
@@ -34,15 +81,13 @@ struct DetailView: View {
                         }
                         Spacer()
                         VStack(alignment: .center){
-                            Text("17 th Jun `23")
+                            Text(formattedDate(from: dt))
                                 .font(Font.custom("SF Pro Display", size: 34))
                                 .foregroundColor(.white)
                                 .frame(maxWidth: .infinity, alignment: .top)
-                            Text("Thursday")
-                                .font(
-                                    Font.custom("SF Pro Display", size: 20)
-                                        .weight(.semibold)
-                                )
+                            Text(weekdayName(from: dt))
+                                .font(Font.custom("SF Pro Display", size: 20)
+                                        .weight(.semibold))
                                 .foregroundColor(Color(red: 0.92, green: 0.92, blue: 0.96).opacity(0.6))
                         }
                         ZStack{
@@ -74,7 +119,7 @@ struct DetailView: View {
                                         Text("Rain: ")
                                             .font(.system(size: 16, weight: .bold))
                                             .foregroundColor(Color(red: 0.682353, green: 0.682353, blue: 0.682353))
-                                        Text("4 mm")
+                                        Text("\(Int(rain?.rounded() ?? 0)) mm")
                                             .font(.system(size: 16, weight: .bold))
                                             .foregroundColor(.white)
                                     }.scaledToFit()
@@ -121,36 +166,38 @@ struct DetailView: View {
 
                                     ScrollView(.horizontal) {
                                             HStack(spacing: 0) {
-                                                ForEach(0..<10) { index in
+                                                ForEach(vm.weather) { index in
+                                                    if formattedDate(from: index.dt) == formattedDate(from: dt){
                                                     ZStack{
-                                                    RoundedRectangle(cornerRadius: 50)
-                                                        .frame(width: 70, height: 170)
-                                                        .foregroundColor(selectedItemIndex == index ? Color(red: 0.28, green: 0.19, blue: 0.62) : Color(red: 0.28, green: 0.19, blue: 0.62).opacity(0.2))
-                                                        .id(index)
-                                                        .onTapGesture {
-                                                            withAnimation {
-                                                                selectedItemIndex = index
+                                                        RoundedRectangle(cornerRadius: 50)
+                                                            .frame(width: 70, height: 170)
+                                                            .foregroundColor(selectedItemIndex == index.dt ? Color(red: 0.28, green: 0.19, blue: 0.62) : Color(red: 0.28, green: 0.19, blue: 0.62).opacity(0.2))
+                                                            .id(index.dt)
+                                                            .onTapGesture {
+                                                                withAnimation {
+                                                                    selectedItemIndex = index.dt
+                                                                }
                                                             }
-                                                        }
                                                         VStack{
-                                                            Text("Now")
-                                                            .font(
-                                                            Font.custom("SF Pro Text", size: 15)
-                                                            .weight(.semibold)
-                                                            )
-                                                            .foregroundColor(.white)
-                                                            Image("Sun")
-                                                                .resizable()
-                                                                .aspectRatio(contentMode: .fill)
-                                                                .frame(width: 32, height: 32)
-                                                                .clipped()
-//                                                                .resizable()
-//                                                                .scaledToFit()
-                                                            Text("26°")
-                                                            .font(Font.custom("SF Pro Display", size: 20))
-                                                            .kerning(0.38)
-                                                            .foregroundColor(.white)
+                                                            Text(formattedTime(from: index.dt))
+                                                                .font(
+                                                                    Font.custom("SF Pro Text", size: 15)
+                                                                        .weight(.semibold)
+                                                                )
+                                                                .foregroundColor(.white)
+                                                            if let image = imageNamesAndDescriptions[index.weather.first?.icon ?? "01d"] {
+                                                                image
+                                                                    .resizable()
+                                                                    .aspectRatio(contentMode: .fill)
+                                                                    .frame(width: 32, height: 32)
+                                                                    .clipped()
+                                                                      }
+                                                            Text("\(Int(index.temp.rounded()))º")
+                                                                .font(Font.custom("SF Pro Display", size: 20))
+                                                                .kerning(0.38)
+                                                                .foregroundColor(.white)
                                                         }
+                                                    }
                                                 }
                                             }
                                             .padding(5)
@@ -163,13 +210,8 @@ struct DetailView: View {
                     }
                 }
             )
+        }.onAppear(){
+            vm.didChangedText.send(searchText)
         }
-    }
-}
-
-
-struct DetailViewPreviews: PreviewProvider {
-    static var previews: some View {
-        DetailView(searchText: "")
     }
 }

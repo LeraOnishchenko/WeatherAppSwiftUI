@@ -13,6 +13,7 @@ import RxCombine
 class ViewModel : ObservableObject {
     
     private let defaultDailyWeather = [WeatherData.Daily(dt: 0, temp: WeatherData.Temp(day: 0, night: 0), wind_speed: 0, weather: [WeatherData.Weather(main: "", icon: "")], rain: nil)]
+    private let defaultHourlyWeather = [WeatherData.Hourly(dt: 0, temp: 0, wind_speed: 0, weather: [WeatherData.Weather(main: "", icon: "")])]
     private let weatherApiHost = "https://api.openweathermap.org"
     var subscriptions = Set<AnyCancellable>()
     var outSubject = CurrentValueSubject<[WeatherData.Daily], Never>([])
@@ -54,10 +55,10 @@ class ViewModel : ObservableObject {
                                 type: WeatherData.self
             ).asObservable().catch { error in
                 Just(WeatherData(lat: 0, lon: 0, timezone: "", timezone_offset: 0,
-                                 daily: self.defaultDailyWeather)).asObservable()
+                                 daily: self.defaultDailyWeather, hourly: self.defaultHourlyWeather)).asObservable()
             }
         }.map({ wd in
-            wd.daily
+            wd.daily ?? self.defaultDailyWeather
         }).publisher.sink { _ in
             fatalError()
         } receiveValue: { array in
