@@ -18,7 +18,6 @@ struct ContentView: View {
        }
     
     @ObservedObject var vm = ViewModel()
-    @State private var selectedItem: WeatherData.Daily?
     @State private var searchText = ""
     
     var body: some View {
@@ -33,7 +32,7 @@ struct ContentView: View {
             )
             .edgesIgnoringSafeArea(.all)
             .overlay(
-            ZStack{
+            VStack{
                 VStack(alignment: .leading) {
                     HStack{
                         Text("Weather forecast for: \(searchText)")
@@ -42,7 +41,7 @@ struct ContentView: View {
                     }
                     
                     List(vm.weather)  { weather in
-                        NavigationLink(destination: DetailView(selectedItem: weather.temp.day)) {
+                        NavigationLink(destination: DetailView(searchText: searchText)) {
                         WeatherCellView(dayTemp: weather.temp.day, windSpeed: weather.wind_speed, rain: weather.rain ?? 0.0, dt: weather.dt, weather: weather.weather.first?.main ?? "", weatherImage: weather.weather.first?.icon ?? "" ).listRowBackground(Color.clear)
                         }.listRowBackground(Color.clear)
                         
@@ -58,11 +57,9 @@ struct ContentView: View {
 
             .navigationTitle("Weather App")
             .navigationBarTitleDisplayMode(.large)
-        } .background(Color.clear)
-        .searchable(text:$searchText).foregroundColor(.white).tint(Color(red: 0.25, green: 0.8, blue: 0.85))
-//        .onChange(of: searchText) { newValue in
-//                        print(vm.weather)
-//                    }
+        }
+        .background(Color.clear)
+            .searchable(text:$searchText).foregroundColor(.white).tint(Color(red: 0.25, green: 0.8, blue: 0.85))
     }
     private func searchBarImage() -> UIImage {
         let image = UIImage(systemName: "magnifyingglass")
