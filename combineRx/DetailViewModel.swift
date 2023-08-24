@@ -17,12 +17,15 @@ class DetailViewModel : ObservableObject {
     private let weatherApiHost = "https://api.openweathermap.org"
     var subscriptions = Set<AnyCancellable>()
     var outSubject = CurrentValueSubject<[WeatherData.Hourly], Never>([])
-    var didChangedText = CurrentValueSubject<String, Never>("")
+    var didChangedText = CurrentValueSubject<(String, Int), Never>(("",0))
+    //var didChangedScroolViewIndex = CurrentValueSubject<(Int, String, String, Double), Never>((0, "", "", 0.0))
     @Published var weather: [WeatherData.Hourly] = []
+    var currDt = 0
 
     init() {
 
-        didChangedText.asObservable().flatMap { city in
+        didChangedText.asObservable().flatMap { (city, dt) in
+            self.currDt = dt
             return NetworkTaskFactory.getNewTask(
                 url: self.createUrlForGettingCities(getFromCity: city),
                 type: [cityStruct].self
@@ -63,7 +66,13 @@ class DetailViewModel : ObservableObject {
             fatalError()
         } receiveValue: { array in
             DispatchQueue.main.async {
-                self.outSubject.send(array)
+                self.outSubject.send(array.filter{
+                    wd in
+                    if self.formattedDate(from: wd.dt) == self.formattedDate(from: self.currDt){
+                        return true
+                    }
+                    return false
+                })
                 self.objectWillChange.send()
             }
         }.store(in: &subscriptions)
@@ -82,6 +91,12 @@ class DetailViewModel : ObservableObject {
                     -> String{
         return weatherApiHost + "/data/2.5/onecall?lat=\(city.lat)&lon=\(city.lon)&exclude=minutely,daily,current,alerts&units=metric&appid=da258afbd75f99802dfece33abd4974c"
     }
+    
+    func formattedDate(from timestamp: Int) -> String {
+         let dateFormatter = DateFormatter()
+         dateFormatter.dateFormat = "d 'th' MMM `yy"
+        return dateFormatter.string(from: Date(timeIntervalSince1970: TimeInterval(timestamp)))
+     }
     
 //    private func createUrlForGettingDailyWeatherHourly(getFromCityStruct city:cityStruct)
 //                    -> String{

@@ -10,32 +10,15 @@ import SwiftUI
 
 struct DetailView: View {
     
-    let imageNamesAndDescriptions: [String: Image] = [
-        "01d": Image("Sun"),
-        "02d": Image("FewClouds"),
-        "03d": Image("Cloud"),
-        "04d": Image("brokenClouds"),
-        "09d": Image("showerRain"),
-        "10d": Image("rainIm"),
-        "11d": Image("thunderstorm"),
-        "13d": Image("snow"),
-        "50d": Image("mist"),
-        "01n": Image("nightClear"),
-        "02n": Image("nightFewClouds"),
-        "03n": Image("nightSCloud"),
-        "04n": Image("nightBrokenClouds"),
-        "09n": Image("nightShowerRain"),
-        "10n": Image("nightRain"),
-        "11n": Image("nightThunderstorm"),
-        "13n": Image("nightSnow"),
-        "50n": Image("nightMist")
-    ]
-    
+    @State private var temp = 26
+    @State private var wind = 4
+    var weather = "Mid Rain"
+    var weatherImage = "Sun"
     var searchText: String
     var dt: Int
     var rain: Double?
     @ObservedObject var vm = DetailViewModel()
-    @State private var selectedItemIndex: Int?
+    @State private var selectedItemIndex: Int? = 0
 
     func formattedDate(from timestamp: Int) -> String {
          let dateFormatter = DateFormatter()
@@ -97,7 +80,7 @@ struct DetailView: View {
                             HStack{
                                 VStack(alignment: .leading) {
                                     VStack(alignment: .leading){
-                                        Text("26º")
+                                        Text("\(self.temp)º")
                                             .font(.system(size: 46, weight: .bold))
                                             .foregroundColor(.white)
                                     }
@@ -167,8 +150,9 @@ struct DetailView: View {
                                     ScrollView(.horizontal) {
                                             HStack(spacing: 0) {
                                                 ForEach(vm.weather) { index in
-                                                    if formattedDate(from: index.dt) == formattedDate(from: dt){
+                                                    
                                                     ZStack{
+                                                       // selectedItemIndex = 0.dt
                                                         RoundedRectangle(cornerRadius: 50)
                                                             .frame(width: 70, height: 170)
                                                             .foregroundColor(selectedItemIndex == index.dt ? Color(red: 0.28, green: 0.19, blue: 0.62) : Color(red: 0.28, green: 0.19, blue: 0.62).opacity(0.2))
@@ -176,6 +160,11 @@ struct DetailView: View {
                                                             .onTapGesture {
                                                                 withAnimation {
                                                                     selectedItemIndex = index.dt
+                                                                    //self.weatherImage = imageNamesAndDescriptions[index.weather.first?.icon ?? "01d"]
+                                                                    //self.weather = index.weather.first?
+                                                                    wind = Int(index.wind_speed)
+                                                                    temp = Int(index.temp)
+                                                                    
                                                                 }
                                                             }
                                                         VStack{
@@ -198,7 +187,7 @@ struct DetailView: View {
                                                                 .foregroundColor(.white)
                                                         }
                                                     }
-                                                }
+                                                
                                             }
                                             .padding(5)
                                         }
@@ -211,7 +200,7 @@ struct DetailView: View {
                 }
             )
         }.onAppear(){
-            vm.didChangedText.send(searchText)
+            vm.didChangedText.send((searchText,dt))
         }
     }
 }

@@ -10,18 +10,6 @@ import SwiftUI
 
 struct WeatherCellView: View {
     
-    let imageNamesAndDescriptions: [String: Image] = [
-        "01d": Image("Sun"),
-        "02d": Image("FewClouds"),
-        "03d": Image("Cloud"),
-        "04d": Image("brokenClouds"),
-        "09d": Image("showerRain"),
-        "10d": Image("rainIm"),
-        "11d": Image("thunderstorm"),
-        "13d": Image("snow"),
-        "50d": Image("mist")
-    ]
-    
     var dayTemp: Double
     var windSpeed: Double
     var rain: Double
