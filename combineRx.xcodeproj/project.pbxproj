@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		CF05A5932A9F3CE000287813 /* GlobalFunc.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF05A5922A9F3CE000287813 /* GlobalFunc.swift */; };
 		CF3DDBFC29DD934900501158 /* combineRxApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF3DDBFB29DD934900501158 /* combineRxApp.swift */; };
 		CF3DDBFE29DD934900501158 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF3DDBFD29DD934900501158 /* ContentView.swift */; };
 		CF3DDC0029DD934A00501158 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CF3DDBFF29DD934A00501158 /* Assets.xcassets */; };
@@ -23,6 +24,7 @@
 
 /* Begin PBXFileReference section */
 		C434B6CEED9D5F9545C89B09 /* Pods-combineRx.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-combineRx.release.xcconfig"; path = "Target Support Files/Pods-combineRx/Pods-combineRx.release.xcconfig"; sourceTree = "<group>"; };
+		CF05A5922A9F3CE000287813 /* GlobalFunc.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlobalFunc.swift; sourceTree = "<group>"; };
 		CF3DDBF829DD934900501158 /* combineRx.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = combineRx.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		CF3DDBFB29DD934900501158 /* combineRxApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = combineRxApp.swift; sourceTree = "<group>"; };
 		CF3DDBFD29DD934900501158 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -90,18 +92,16 @@
 		CF3DDBFA29DD934900501158 /* combineRx */ = {
 			isa = PBXGroup;
 			children = (
-				CF47B7A32A7A778900B7ADA0 /* combineRx.entitlements */,
 				CF3DDBFB29DD934900501158 /* combineRxApp.swift */,
-				CF3DDBFD29DD934900501158 /* ContentView.swift */,
-				CFE9B50E29DD98100088B31A /* ViewModel.swift */,
+				CF47B7A32A7A778900B7ADA0 /* combineRx.entitlements */,
+				CFA3F1E92A978CBF00112FA7 /* Structs */,
+				CFA3F1E82A978CAD00112FA7 /* Models */,
+				CFA3F1E72A978C9600112FA7 /* Network */,
+				CFA3F1E62A978C8100112FA7 /* Views */,
 				CF3DDBFF29DD934A00501158 /* Assets.xcassets */,
 				CF3DDC0129DD934A00501158 /* Preview Content */,
-				CFE9B50A29DD978F0088B31A /* Network.swift */,
-				CFE9B50C29DD97C90088B31A /* WeatherStructure.swift */,
-				CF7CF8532A8F7CA70004951D /* WeatherCellView.swift */,
-				CF7CF8552A8F7E240004951D /* DetailView.swift */,
-				CF7EA2FA2A936C7600F74830 /* DetailViewModel.swift */,
 				CF913EBC2A963A120032B7DC /* ImageName.swift */,
+				CF05A5922A9F3CE000287813 /* GlobalFunc.swift */,
 			);
 			path = combineRx;
 			sourceTree = "<group>";
@@ -112,6 +112,41 @@
 				CF3DDC0229DD934A00501158 /* Preview Assets.xcassets */,
 			);
 			path = "Preview Content";
+			sourceTree = "<group>";
+		};
+		CFA3F1E62A978C8100112FA7 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				CF3DDBFD29DD934900501158 /* ContentView.swift */,
+				CF7CF8532A8F7CA70004951D /* WeatherCellView.swift */,
+				CF7CF8552A8F7E240004951D /* DetailView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		CFA3F1E72A978C9600112FA7 /* Network */ = {
+			isa = PBXGroup;
+			children = (
+				CFE9B50A29DD978F0088B31A /* Network.swift */,
+			);
+			path = Network;
+			sourceTree = "<group>";
+		};
+		CFA3F1E82A978CAD00112FA7 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				CF7EA2FA2A936C7600F74830 /* DetailViewModel.swift */,
+				CFE9B50E29DD98100088B31A /* ViewModel.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		CFA3F1E92A978CBF00112FA7 /* Structs */ = {
+			isa = PBXGroup;
+			children = (
+				CFE9B50C29DD97C90088B31A /* WeatherStructure.swift */,
+			);
+			path = Structs;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -233,6 +268,7 @@
 				CF3DDBFC29DD934900501158 /* combineRxApp.swift in Sources */,
 				CF7CF8562A8F7E240004951D /* DetailView.swift in Sources */,
 				CFE9B50D29DD97C90088B31A /* WeatherStructure.swift in Sources */,
+				CF05A5932A9F3CE000287813 /* GlobalFunc.swift in Sources */,
 				CFE9B50B29DD978F0088B31A /* Network.swift in Sources */,
 				CF913EBD2A963A120032B7DC /* ImageName.swift in Sources */,
 				CF7CF8542A8F7CA70004951D /* WeatherCellView.swift in Sources */,

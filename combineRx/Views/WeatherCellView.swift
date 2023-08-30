@@ -17,19 +17,6 @@ struct WeatherCellView: View {
     var weather: String
     var weatherImage: String
     
-    func formattedDate(from timestamp: Int) -> String {
-         let dateFormatter = DateFormatter()
-         dateFormatter.dateFormat = "d 'th' MMM `yy"
-        return dateFormatter.string(from: Date(timeIntervalSince1970: TimeInterval(timestamp)))
-     }
-    
-    func weekdayName(from timestamp: Int) -> String {
-        let date = Date(timeIntervalSince1970: TimeInterval(timestamp))
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "EEEE"
-        return dateFormatter.string(from: date)
-    }
-    
     var body: some View {
         ZStack(alignment: .center){
             Image("rectangle")

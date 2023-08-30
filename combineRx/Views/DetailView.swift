@@ -10,39 +10,10 @@ import SwiftUI
 
 struct DetailView: View {
     
-    @State private var temp = 26
-    @State private var wind = 4
-    var weather = "Mid Rain"
-    var weatherImage = "Sun"
     var searchText: String
     var dt: Int
     var rain: Double?
     @ObservedObject var vm = DetailViewModel()
-    @State private var selectedItemIndex: Int? = 0
-
-    func formattedDate(from timestamp: Int) -> String {
-         let dateFormatter = DateFormatter()
-         dateFormatter.dateFormat = "d 'th' MMM `yy"
-        return dateFormatter.string(from: Date(timeIntervalSince1970: TimeInterval(timestamp)))
-     }
-    
-    func formattedTime(from timestamp: Int) -> String {
-          let dateFormatter = DateFormatter()
-          dateFormatter.dateFormat = "HH"
-          let date = Date(timeIntervalSince1970: TimeInterval(timestamp))
-          return dateFormatter.string(from: date)
-      }
-    
-    func weekdayName(from timestamp: Int) -> String {
-        let date = Date(timeIntervalSince1970: TimeInterval(timestamp))
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "EEEE"
-        return dateFormatter.string(from: date)
-    }
-    
-//    func cheakWeather() -> [WeatherData.Hourly]{
-//        return
-//    }
     
     var body: some View {
         NavigationView {
@@ -80,7 +51,7 @@ struct DetailView: View {
                             HStack{
                                 VStack(alignment: .leading) {
                                     VStack(alignment: .leading){
-                                        Text("\(self.temp)º")
+                                        Text("\(Int((vm.selected?.temp.rounded() ?? 0)))º")
                                             .font(.system(size: 46, weight: .bold))
                                             .foregroundColor(.white)
                                     }
@@ -91,7 +62,7 @@ struct DetailView: View {
                                         Text("Wind:")
                                             .font(.system(size: 16, weight: .bold))
                                             .foregroundColor(Color(red: 0.682353, green: 0.682353, blue: 0.682353)).scaledToFit()
-                                        Text("4 m/s")
+                                        Text("\(Int((vm.selected?.wind_speed.rounded() ?? 0))) m/s")
                                             .font(.system(size: 16, weight: .bold))
                                             .foregroundColor(.white).scaledToFit()
                                     }.scaledToFit()
@@ -109,16 +80,14 @@ struct DetailView: View {
                                 }.scaledToFill()
                                 Spacer()
                                 VStack{
-//                                    if let image = imageNamesAndDescriptions[weatherImage] {
-//                                        image
-//                                            .resizable()
-//                                            .scaledToFit()
-//                                                } else {
-                                                    Image("Sun")
-                                                        .resizable()
-                                                        .scaledToFit()
-                                              //  }
-                                    Text("Mid Rain")
+                                    if let image = imageNamesAndDescriptions[                               vm.selected?.weather.first?.icon ?? ""] {
+                                        image
+                                            .resizable()
+                                            .scaledToFit()
+                                    }else {
+                                        Image("Sun")
+                                    }
+                                    Text("\((vm.selected?.weather.first?.main  ?? ""))")
                                 }.scaledToFit()
                             }.scaledToFit()
                         }
@@ -131,7 +100,6 @@ struct DetailView: View {
                                 Spacer()
                                 Spacer()
                                 Spacer()
-
                                 HStack{
                                     HStack{
                                         Text("Hourly Forecast")
@@ -146,25 +114,17 @@ struct DetailView: View {
                                 Spacer()
                                 Spacer()
                                 HStack{
-
                                     ScrollView(.horizontal) {
                                             HStack(spacing: 0) {
                                                 ForEach(vm.weather) { index in
-                                                    
                                                     ZStack{
-                                                       // selectedItemIndex = 0.dt
                                                         RoundedRectangle(cornerRadius: 50)
                                                             .frame(width: 70, height: 170)
-                                                            .foregroundColor(selectedItemIndex == index.dt ? Color(red: 0.28, green: 0.19, blue: 0.62) : Color(red: 0.28, green: 0.19, blue: 0.62).opacity(0.2))
+                                                            .foregroundColor(index.selected == true ? Color(red: 0.28, green: 0.19, blue: 0.62) : Color(red: 0.28, green: 0.19, blue: 0.62).opacity(0.2))
                                                             .id(index.dt)
                                                             .onTapGesture {
                                                                 withAnimation {
-                                                                    selectedItemIndex = index.dt
-                                                                    //self.weatherImage = imageNamesAndDescriptions[index.weather.first?.icon ?? "01d"]
-                                                                    //self.weather = index.weather.first?
-                                                                    wind = Int(index.wind_speed)
-                                                                    temp = Int(index.temp)
-                                                                    
+                                                                    vm.didChangedScroolViewIndex.send(index.dt)
                                                                 }
                                                             }
                                                         VStack{
@@ -187,7 +147,6 @@ struct DetailView: View {
                                                                 .foregroundColor(.white)
                                                         }
                                                     }
-                                                
                                             }
                                             .padding(5)
                                         }

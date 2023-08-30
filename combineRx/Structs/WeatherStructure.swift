@@ -41,7 +41,7 @@ struct WeatherData: Codable, Equatable {
     
     struct Hourly: Codable,Equatable,Identifiable{
         static func == (lhs: WeatherData.Hourly, rhs: WeatherData.Hourly) -> Bool {
-             return lhs.dt == rhs.dt && lhs.temp == rhs.temp && lhs.wind_speed == rhs.wind_speed && lhs.weather == rhs.weather
+             return lhs.dt == rhs.dt && lhs.temp == rhs.temp && lhs.wind_speed == rhs.wind_speed && lhs.weather == rhs.weather && lhs.selected == rhs.selected
         }
         
         var id: Int { dt }
@@ -49,7 +49,7 @@ struct WeatherData: Codable, Equatable {
         let temp: Double
         let wind_speed: Double
         let weather: [Weather]
-        //let rain: Double?
+        var selected: Bool? = false
     }
 
     struct Temp: Codable, Equatable {

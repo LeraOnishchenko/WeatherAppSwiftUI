@@ -18,8 +18,9 @@ class DetailViewModel : ObservableObject {
     var subscriptions = Set<AnyCancellable>()
     var outSubject = CurrentValueSubject<[WeatherData.Hourly], Never>([])
     var didChangedText = CurrentValueSubject<(String, Int), Never>(("",0))
-    //var didChangedScroolViewIndex = CurrentValueSubject<(Int, String, String, Double), Never>((0, "", "", 0.0))
+    var didChangedScroolViewIndex = CurrentValueSubject<Int, Never>((0))
     @Published var weather: [WeatherData.Hourly] = []
+    var selected : WeatherData.Hourly? = nil
     var currDt = 0
 
     init() {
@@ -66,21 +67,50 @@ class DetailViewModel : ObservableObject {
             fatalError()
         } receiveValue: { array in
             DispatchQueue.main.async {
-                self.outSubject.send(array.filter{
+                var arrToSend = array
+                arrToSend = arrToSend.filter{
                     wd in
-                    if self.formattedDate(from: wd.dt) == self.formattedDate(from: self.currDt){
+                    if formattedDate(from: wd.dt) == formattedDate(from: self.currDt){
                         return true
                     }
                     return false
-                })
+                }
+                if arrToSend.isEmpty {
+                    self.outSubject.send(arrToSend)
+                    self.objectWillChange.send()
+                    return
+                }
+                arrToSend[0].selected = true
+                self.selected = arrToSend[0]
+                self.outSubject.send(arrToSend)
                 self.objectWillChange.send()
             }
         }.store(in: &subscriptions)
-       
+    
+        didChangedScroolViewIndex.asObservable().publisher.sink { _ in
+            fatalError()
+        } receiveValue: { id in
+            DispatchQueue.main.async {
+                var arrToSend = self.weather
+                if arrToSend.isEmpty {
+                    return
+                }
+                let idxPrevSelected = arrToSend.firstIndex{ wd in
+                    return wd.selected == true
+                }
+                arrToSend[idxPrevSelected ?? 0].selected = false
+                let idxCurrSelected = arrToSend.firstIndex{ wd in
+                    return wd.id == id
+                }
+                arrToSend[idxCurrSelected ?? 0].selected = true
+                self.selected = arrToSend[idxCurrSelected ?? 0]
+                self.outSubject.send(arrToSend)
+                self.objectWillChange.send()
+            }
+        }.store(in: &subscriptions)
         
         outSubject.assign(to: &$weather)
     }
-
 
     private func createUrlForGettingCities(getFromCity city:String) -> String {
         let encCity = city.addingPercentEncoding(withAllowedCharacters: .alphanumerics)!
@@ -92,15 +122,5 @@ class DetailViewModel : ObservableObject {
         return weatherApiHost + "/data/2.5/onecall?lat=\(city.lat)&lon=\(city.lon)&exclude=minutely,daily,current,alerts&units=metric&appid=da258afbd75f99802dfece33abd4974c"
     }
     
-    func formattedDate(from timestamp: Int) -> String {
-         let dateFormatter = DateFormatter()
-         dateFormatter.dateFormat = "d 'th' MMM `yy"
-        return dateFormatter.string(from: Date(timeIntervalSince1970: TimeInterval(timestamp)))
-     }
-    
-//    private func createUrlForGettingDailyWeatherHourly(getFromCityStruct city:cityStruct)
-//                    -> String{
-//        return weatherApiHost + "api.openweathermap.org/data/2.5/forecast?lat=\(city.lat)&lon=\(city.lon)&appid=da258afbd75f99802dfece33abd4974c"
-//    }
 }
 
